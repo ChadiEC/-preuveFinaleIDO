@@ -55,6 +55,8 @@ int main() {
     // Allumer puis éteindre les 4 LED des coins (10000001 = 128 = 0x81)
     i2cWriteByteData(handle, 0x00, 0x81);
     i2cWriteByteData(handle, 0x0e, 0x81);
+    
+    
     time_sleep(1);
     i2cWriteByteData(handle, 0x00, 0x00);
     i2cWriteByteData(handle, 0x0e, 0x00);
