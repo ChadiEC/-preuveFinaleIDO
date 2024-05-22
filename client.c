@@ -8,7 +8,7 @@
 #include <pigpio.h>
 
 // port utilisé
-#define PORT 8889
+#define PORT 8888
 // ip du conteur
 #define DEST_IP "10.10.0.174"
 // message si le bouton est appuyé
@@ -70,6 +70,8 @@ int main() {
     dest_addr.sin_addr.s_addr = inet_addr(DEST_IP);
     dest_addr.sin_port = htons(PORT);
 
+    
+
     // Création de la connexion
     if (connect(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr)) < 0) {
         printf("Erreur de connexion\n");
@@ -88,7 +90,7 @@ int main() {
         //Bouton appuyé
         if (btn_state == 0) { 
             send(sock, MESSAGE_ON, strlen(MESSAGE_ON), 0);
-        } else { 
+        } else if (btn_state == 1) { 
             // Bouton off
             send(sock, MESSAGE_OFF, strlen(MESSAGE_OFF), 0);
         }
@@ -96,8 +98,9 @@ int main() {
         // Attendre la réponse du conteneur
         value = read(sock, buffer, BUFFER_SIZE);
         if (value > 0) {
-            printf("Message reçu : %s\n", buffer);
-
+            printf("Message reçu :%s\n", buffer);
+            time_sleep(0.5);
+            
             // Stockage de l'équipe et de l'état dans des variables
             char team = buffer[0];
             char state = buffer[2];
@@ -109,17 +112,12 @@ int main() {
                 }else if(state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
                 }
-                else{
-                    printf("Valeur invalide");
-                }
 
             } else if (team == '2') {
                 if(state == '1'){
                 i2cWriteByteData(handle, 0x00, 0x40);
                 }else if (state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
 
             } else if (team == '3') {
@@ -127,8 +125,6 @@ int main() {
                 i2cWriteByteData(handle, 0x00, 0x20);
                 }if (state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
 
             } else if (team == '4') {
@@ -136,8 +132,6 @@ int main() {
                 i2cWriteByteData(handle, 0x00, 0x16);
                 }else if(state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
 
             } else if (team == '5') {
@@ -145,26 +139,18 @@ int main() {
                 i2cWriteByteData(handle, 0x00, 0x08);
                 }else if(state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
-
             } else if (team == '6') {
                 if (state == '1'){
                 i2cWriteByteData(handle, 0x00, 0x04);
                 }else if (state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
-
             } else if (team == '7') {
                 if(state == '1'){
                 i2cWriteByteData(handle, 0x00, 0x02);
                 }else if (state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
 
             } else if (team == '8') {
@@ -172,8 +158,6 @@ int main() {
                 i2cWriteByteData(handle, 0x00, 0x01);
                 }else if (state == '0'){
                 i2cWriteByteData(handle, 0x00, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
 
             } else if (team == '9') {
@@ -181,14 +165,12 @@ int main() {
                 i2cWriteByteData(handle, 0x02, 0x80);
                 }else if (state == '0'){
                 i2cWriteByteData(handle, 0x02, 0x00);
-                }else{
-                    printf("Valeur invalide");
                 }
             }
         }
 
     
-        time_sleep(0.1);
+        time_sleep(0.5);
         
     }
 
@@ -198,4 +180,6 @@ int main() {
     close(sock);
     return 0;
 }
+
+
 
